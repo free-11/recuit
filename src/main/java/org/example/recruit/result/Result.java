@@ -24,6 +24,9 @@ public class Result<T> {
     public static <T> Result<T> success(T data) {
         return new Result<>(200, "操作成功", data);
     }
+    /*
+    * 成功返回信息*/
+    public static <T> Result<T> success(String message) {return new Result<>(200,message,null);}
 
     /**
      * 失败：自定义状态码和消息
