@@ -3,8 +3,8 @@ spring:
     name: recruit
   datasource:
     url: jdbc:mysql://localhost:3306/recruit?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: 123456
+    username: NAME
+    password: PSW
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
