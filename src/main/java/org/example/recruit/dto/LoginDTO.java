@@ -1,17 +1,12 @@
-package org.example.recruit.entity;
+package org.example.recruit.dto;
 
 import lombok.Data;
 
 /**
- * 管理员实体类
+ * 登录请求DTO
  */
 @Data
-public class Admin {
-    /**
-     * 主键ID
-     */
-    private Long id;
-    
+public class LoginDTO {
     /**
      * 用户名
      */

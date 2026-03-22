@@ -1,54 +1,84 @@
 package org.example.recruit.result;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
+/**
+ * 统一响应结果类
+ * 用于规范API响应格式，包含状态码、消息和数据
+ * @param <T> 响应数据类型
+ */
 @Data
-@NoArgsConstructor
-public class Result<T> {
-
-    private int code;     // 状态码
-    private String message; // 消息
-    private T data;       // 数据
+public class Result<T> implements Serializable {
+    /**
+     * 状态码
+     * 200: 成功
+     * 400: 业务错误
+     * 500: 系统错误
+     */
+    private Integer code;
 
     /**
-     * 成功：无数据
+     * 响应消息
+     */
+    private String message;
+
+    /**
+     * 响应数据
+     */
+    private T data;
+
+    /**
+     * 成功响应（无数据）
+     * @param <T> 响应数据类型
+     * @return 成功响应对象
      */
     public static <T> Result<T> success() {
-        return new Result<>(200, "操作成功", null);
+        Result<T> result = new Result<>();
+        result.setCode(200);
+        result.setMessage("success");
+        return result;
     }
 
     /**
-     * 成功：带数据
+     * 成功响应（带数据）
+     * @param data 响应数据
+     * @param <T> 响应数据类型
+     * @return 成功响应对象
      */
     public static <T> Result<T> success(T data) {
-        return new Result<>(200, "操作成功", data);
+        Result<T> result = new Result<>();
+        result.setCode(200);
+        result.setMessage("success");
+        result.setData(data);
+        return result;
     }
-    /*
-    * 成功返回信息*/
-    public static <T> Result<T> success(String message) {return new Result<>(200,message,null);}
 
     /**
-     * 失败：自定义状态码和消息
+     * 错误响应（指定错误码和消息）
+     * @param code 错误码
+     * @param message 错误消息
+     * @param <T> 响应数据类型
+     * @return 错误响应对象
      */
     public static <T> Result<T> error(int code, String message) {
-        return new Result<>(code, message, null);
+        Result<T> result = new Result<>();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
     }
 
     /**
-     * 失败：默认错误信息
+     * 错误响应（默认错误码400）
+     * @param message 错误消息
+     * @param <T> 响应数据类型
+     * @return 错误响应对象
      */
     public static <T> Result<T> error(String message) {
-        return new Result<>(500, message, null);
+        Result<T> result = new Result<>();
+        result.setCode(400);
+        result.setMessage(message);
+        return result;
     }
-
-    /**
-     * 私有构造函数，防止外部直接实例化
-     */
-    private Result(int code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
-
 }
