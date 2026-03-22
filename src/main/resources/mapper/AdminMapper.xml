@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.recruit.mapper.AdminMapper">
+    
+    <!-- 根据用户名查询管理员 -->
+    <select id="getAdminByUsername" parameterType="java.lang.String" resultType="org.example.recruit.entity.Admin">
+        SELECT id, username, password
+        FROM admin
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 插入管理员 -->
+    <insert id="insert" parameterType="org.example.recruit.entity.Admin">
+        INSERT INTO admin (username, password)
+        VALUES (#{username}, #{password})
+    </insert>
+    
+    <!-- 更新管理员 -->
+    <update id="update" parameterType="org.example.recruit.entity.Admin">
+        UPDATE admin
+        SET username = #{username}, password = #{password}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除管理员 -->
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM admin
+        WHERE id = #{id}
+    </delete>
+</mapper>
