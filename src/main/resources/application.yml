@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
-  port: 8082
+  port: 8081
 
 mybatis-plus:
 
@@ -21,9 +21,7 @@ mybatis-plus:
 
       log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-global-config:
-      db-config:
-        id-type: auto
+
 
 
 
