@@ -11,6 +11,8 @@ import org.example.recruit.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/student")
 @Slf4j
@@ -63,5 +65,14 @@ public class StudentController {
     @GetMapping("/exportall")
     public void exportAllStudents(HttpServletResponse response) {
         studentService.exportAllStudents(response);
+    }
+
+    /**
+     * 导出选中的学生信息为 Excel
+     * Post /api/student/export
+     */
+    @PostMapping("/export")
+    public void exportSelectedStudents(@RequestBody List<Long> ids, HttpServletResponse response) {
+        studentService.exportSelectedStudents(ids, response);
     }
 }

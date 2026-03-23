@@ -15,7 +15,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -35,7 +37,7 @@ public class StudentServiceImpl implements StudentService {
             //创建实体对象
             Student student = new Student();
             //设置提交时间
-            studentApplyDTO.setSubmissionTime(java.sql.Timestamp.valueOf(LocalDateTime.now()));
+            studentApplyDTO.setSubmissionTime(Timestamp.valueOf(LocalDateTime.now()));
 
 
             //将DTO属性拷贝到实体
@@ -80,27 +82,58 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void exportAllStudents(HttpServletResponse response) {
+        // 查询所有学生数据
+        QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("submission_time");
+        List<Student> students = studentMapper.selectList(queryWrapper);
+        
+        // 导出 Excel
+        exportExcel(students, "table_student", response);
+    }
+
+    @Override
+    public void exportSelectedStudents(List<Long> ids, HttpServletResponse response) {
+        if (ids == null || ids.isEmpty()) {
+            throw new RuntimeException("未选择要导出的学生");
+        }
+        
+        // 根据 ID 列表查询学生数据
+        QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", ids);
+        queryWrapper.orderByDesc("submission_time");
+        List<Student> students = studentMapper.selectList(queryWrapper);
+        
+        if (students.isEmpty()) {
+            throw new RuntimeException("未找到选中的学生信息");
+        }
+        
+        // 导出 Excel
+        exportExcel(students, "table_student_selected", response);
+    }
+
+    /**
+     * 通用 Excel 导出方法
+     * @param students 学生列表
+     * @param fileNamePrefix 文件名前缀
+     * @param response HTTP响应对象
+     */
+    private void exportExcel(List<Student> students, String fileNamePrefix, HttpServletResponse response) {
         try {
-            // 查询所有学生数据
-            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
-            queryWrapper.orderByDesc("submission_time");
-            List<Student> students = studentMapper.selectList(queryWrapper);
-            
             // 响应头
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
 
             // 文件名
-            String fileName = "table_student_" + java.time.LocalDateTime.now().format(
-                java.time.format.DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".xlsx";
+            String fileName = fileNamePrefix + "_" + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".xlsx";
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-            
+
             // 写入 excel
             EasyExcel.write(response.getOutputStream(), Student.class)
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                    .sheet("student")
+                    .sheet("data")
                     .doWrite(students);
-            
+
             log.info("导出 Excel 成功，记录数：{}", students.size());
         } catch (Exception e) {
             log.error("导出 Excel 失败", e);
