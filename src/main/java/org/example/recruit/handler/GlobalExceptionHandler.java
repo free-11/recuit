@@ -1,6 +1,7 @@
 package org.example.recruit.handler;
 
 import org.example.recruit.exception.BusinessException;
+import org.example.recruit.exception.DeleteFailedException;
 import org.example.recruit.exception.LoginFailedException;
 import org.example.recruit.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,17 @@ public class GlobalExceptionHandler {
     public Result<?> handleLoginFailedException(LoginFailedException e) {
         log.error("登录失败：{}", e.getMessage());
         return Result.error(401, e.getMessage());
+    }
+    
+    /**
+     * 处理删除失败异常
+     * @param e 删除失败异常对象
+     * @return 标准化错误响应（错误码400）
+     */
+    @ExceptionHandler(DeleteFailedException.class)
+    public Result<?> handleDeleteFailedException(DeleteFailedException e) {
+        log.error("删除失败：{}", e.getMessage());
+        return Result.error(400, e.getMessage());
     }
     
     /**

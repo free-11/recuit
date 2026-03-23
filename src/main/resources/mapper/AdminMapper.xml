@@ -10,23 +10,5 @@
         FROM admin
         WHERE username = #{username}
     </select>
-    
-    <!-- 插入管理员 -->
-    <insert id="insert" parameterType="org.example.recruit.entity.Admin">
-        INSERT INTO admin (username, password)
-        VALUES (#{username}, #{password})
-    </insert>
-    
-    <!-- 更新管理员 -->
-    <update id="update" parameterType="org.example.recruit.entity.Admin">
-        UPDATE admin
-        SET username = #{username}, password = #{password}
-        WHERE id = #{id}
-    </update>
-    
-    <!-- 删除管理员 -->
-    <delete id="delete" parameterType="java.lang.Long">
-        DELETE FROM admin
-        WHERE id = #{id}
-    </delete>
+
 </mapper>

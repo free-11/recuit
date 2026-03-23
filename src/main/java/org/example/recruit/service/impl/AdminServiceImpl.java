@@ -19,19 +19,4 @@ public class AdminServiceImpl implements AdminService {
     public Admin getAdminByUsername(String username) {
         return adminMapper.getAdminByUsername(username);
     }
-    
-    @Override
-    public int addAdmin(Admin admin) {
-        return adminMapper.insert(admin);
-    }
-    
-    @Override
-    public int updateAdmin(Admin admin) {
-        return adminMapper.update(admin);
-    }
-    
-    @Override
-    public int deleteAdmin(Long id) {
-        return adminMapper.delete(id);
-    }
 }
