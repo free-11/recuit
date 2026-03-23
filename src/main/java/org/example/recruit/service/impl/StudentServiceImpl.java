@@ -1,7 +1,11 @@
 package org.example.recruit.service.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.example.recruit.dto.StudentApplyDTO;
 import org.example.recruit.entity.Student;
 import org.example.recruit.exception.DeleteFailedException;
@@ -11,8 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -72,5 +76,35 @@ public class StudentServiceImpl implements StudentService {
         // 可以添加排序条件
         queryWrapper.orderByDesc("submission_time");
         return studentMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public void exportAllStudents(HttpServletResponse response) {
+        try {
+            // 查询所有学生数据
+            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+            queryWrapper.orderByDesc("submission_time");
+            List<Student> students = studentMapper.selectList(queryWrapper);
+            
+            // 响应头
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setCharacterEncoding("utf-8");
+
+            // 文件名
+            String fileName = "table_student_" + java.time.LocalDateTime.now().format(
+                java.time.format.DateTimeFormatter.ofPattern("yyMMddHHmmss")) + ".xlsx";
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+            
+            // 写入 excel
+            EasyExcel.write(response.getOutputStream(), Student.class)
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    .sheet("student")
+                    .doWrite(students);
+            
+            log.info("导出 Excel 成功，记录数：{}", students.size());
+        } catch (Exception e) {
+            log.error("导出 Excel 失败", e);
+            throw new RuntimeException("导出失败：" + e.getMessage());
+        }
     }
 }

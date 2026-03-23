@@ -1,10 +1,10 @@
 package org.example.recruit.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.recruit.exception.BusinessException;
 import org.example.recruit.exception.DeleteFailedException;
 import org.example.recruit.exception.LoginFailedException;
 import org.example.recruit.result.Result;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
