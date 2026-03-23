@@ -2,6 +2,8 @@ package org.example.recruit.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.example.recruit.dto.StudentApplyDTO;
 import org.example.recruit.entity.Student;
 import org.example.recruit.result.Result;
@@ -9,7 +11,7 @@ import org.example.recruit.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/student")
@@ -56,5 +58,21 @@ public class StudentController {
         return Result.success(page);
     }
 
+    /**
+     * 导出所有学生信息为 Excel
+     * Get /api/student/exportall
+     */
+    @GetMapping("/exportall")
+    public void exportAllStudents(HttpServletResponse response) {
+        studentService.exportAllStudents(response);
+    }
 
+    /**
+     * 导出选中的学生信息为 Excel
+     * Post /api/student/export
+     */
+    @PostMapping("/export")
+    public void exportSelectedStudents(@RequestBody List<Long> ids, HttpServletResponse response) {
+        studentService.exportSelectedStudents(ids, response);
+    }
 }
