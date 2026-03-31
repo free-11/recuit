@@ -24,7 +24,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Result<?> handleBusinessException(BusinessException e) {
-        log.error("业务异常：{}", e.getMessage());
+        if (e.getCode() >= 500) {
+            log.error("业务异常：{}", e.getMessage());
+        } else {
+            log.warn("业务异常：{}", e.getMessage());
+        }
         return Result.error(e.getCode(), e.getMessage());
     }
     

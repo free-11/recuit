@@ -1,35 +1,30 @@
-package org.example.recruit.entity;
+package org.example.recruit.dto;
 
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-@TableName("student")
-public class Student {
-    @TableId(type = IdType.AUTO)
+public class StudentWithDetailsDTO {
     @ColumnWidth(10)
     private Long id;
     
     @ColumnWidth(15)
     private String name;
     
-    @TableField("student_num")
     @ColumnWidth(15)
     private Long studentNum;
     
     @ColumnWidth(10)
     private String grade;
     
-    @TableField("specialty_id")
     @ColumnWidth(15)
     private Long specialtyId;
+    
+    @ColumnWidth(15)
+    private String specialtyName;  // 专业名称
     
     @ColumnWidth(15)
     private Long qq;
@@ -37,7 +32,6 @@ public class Student {
     @ColumnWidth(15)
     private Long phone;
     
-    @TableField("submission_time")
     @ColumnWidth(20)
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     private Date submissionTime;

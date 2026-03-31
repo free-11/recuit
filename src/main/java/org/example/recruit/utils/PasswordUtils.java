@@ -1,6 +1,7 @@
 package org.example.recruit.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

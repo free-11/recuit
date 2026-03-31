@@ -100,6 +100,13 @@
             <version>3.3.2</version>
         </dependency>
 
+        <!-- ImageIO 扩展：用于读取 WebP 并统一转 PNG -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

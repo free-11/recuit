@@ -1,11 +1,10 @@
 package org.example.recruit.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.recruit.dto.StudentApplyDTO;
-import org.example.recruit.entity.Student;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentService  {
     /**
@@ -24,7 +23,15 @@ public interface StudentService  {
      * @param pageSize 每页大小
      * @return 分页结果
      */
-    Page<Student> getStudentPage(int pageNum, int pageSize);
+    Map<String, Object> getStudentPage(int pageNum, int pageSize);
+
+    /**
+     * 分页查询学生信息（包含专业名称）
+     * @param pageNum 页码
+     * @param pageSize 每页大小
+     * @return 分页结果
+     */
+    Map<String, Object> getStudentPageWithDetails(int pageNum, int pageSize);
 
     /**
      * 导出所有学生信息为 Excel
@@ -33,10 +40,23 @@ public interface StudentService  {
     void exportAllStudents(HttpServletResponse response);
 
     /**
-     * 导出选中的学生信息为 Excel
-     * @param ids 学生 ID 列表
+     * 导出所有学生信息为 Excel（包含专业名称）
      * @param response HTTP 响应对象
      */
-    void exportSelectedStudents(List<Long> ids, HttpServletResponse response);
+    void exportAllStudentsWithDetails(HttpServletResponse response);
+
+    /**
+     * 导出选中的学生信息为 Excel
+     * @param studentNums 学生学号列表
+     * @param response HTTP 响应对象
+     */
+    void exportSelectedStudents(List<Long> studentNums, HttpServletResponse response);
+
+    /**
+     * 导出选中的学生信息为 Excel（包含专业名称）
+     * @param studentNums 学生学号列表
+     * @param response HTTP 响应对象
+     */
+    void exportSelectedStudentsWithDetails(List<Long> studentNums, HttpServletResponse response);
 
 }

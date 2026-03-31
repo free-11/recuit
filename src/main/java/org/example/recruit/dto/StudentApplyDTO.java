@@ -10,7 +10,7 @@ public class StudentApplyDTO {
     private String name;
     private Long studentNum;
     private String grade;
-    private String specialty;
+    private Long specialtyId;
     private Long qq;
     private Long phone;
     private Date submissionTime;
