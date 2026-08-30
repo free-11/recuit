@@ -552,7 +552,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, reactive, nextTick, computed } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { apply, getSpecialtyList, questionList, honorList, techDirectionList, configList } from './api/index'
 
 
@@ -635,7 +635,20 @@ const handleSubmit = async (formEl) => {
     ElMessage.success('报名成功！')
     formEl.resetFields()
   } catch (error) {
-    ElMessage.error(error.response?.data?.message || error.message || '报名失败，请稍后重试')
+    const message = error.response?.data?.message || error.message || '报名失败，请稍后重试'
+    if (message.includes('已经存在') || message.includes('重复报名')) {
+      await ElMessageBox.alert(
+        '该学号已经报名。如需修改报名信息，请联系管理员：13633723956',
+        '报名信息已存在',
+        {
+          confirmButtonText: '知道了',
+          type: 'warning',
+          center: true
+        }
+      )
+    } else {
+      ElMessage.error(message)
+    }
   } finally {
     submitting.value = false
   }
