@@ -45,7 +45,9 @@ public class QrCodeController {
             config.setConfigKey("qq_group_qrcode_path");
             config.setConfigValue(relativePath);
             config.setDescription("QQ群二维码路径");
-            configService.updateConfig(config);
+            if (!configService.updateConfig(config)) {
+                throw new IllegalStateException("二维码路径配置更新失败");
+            }
             
             log.info("[QrCodeController] 上传QQ群二维码成功，路径：{}", relativePath);
             return Result.success(relativePath);
@@ -71,6 +73,13 @@ public class QrCodeController {
             boolean success = commonFileUploadUtil.deleteFile(qrCodePath);
             
             if (success) {
+                Config config = new Config();
+                config.setConfigKey("qq_group_qrcode_path");
+                config.setConfigValue("");
+                config.setDescription("QQ群二维码路径");
+                if (!configService.updateConfig(config)) {
+                    throw new IllegalStateException("二维码路径配置清理失败");
+                }
                 log.info("[QrCodeController] 删除QQ群二维码成功");
                 return Result.success("删除成功");
             } else {

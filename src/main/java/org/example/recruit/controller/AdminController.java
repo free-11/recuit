@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.*;
  * 管理员控制器
  */
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Slf4j
 public class AdminController {
     
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
     
     /**
      * 管理员登录
@@ -44,7 +47,7 @@ public class AdminController {
         }
         
         // 生成JWT token
-        String token = JwtUtils.generateToken(admin.getUsername());
+        String token = jwtUtils.generateToken(admin.getUsername());
         
         // 构建响应
         LoginResponseDTO response = new LoginResponseDTO();

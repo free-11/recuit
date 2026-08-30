@@ -37,6 +37,21 @@ public class StudentServiceImpl implements StudentService {
             if (studentApplyDTO.getStudentNum() == null) {
                 throw new BusinessException("学号不能为空");
             }
+            if (studentApplyDTO.getName() == null || studentApplyDTO.getName().isBlank()) {
+                throw new BusinessException("姓名不能为空");
+            }
+            if (studentApplyDTO.getGrade() == null || studentApplyDTO.getGrade().isBlank()) {
+                throw new BusinessException("年级不能为空");
+            }
+            if (studentApplyDTO.getSpecialtyId() == null) {
+                throw new BusinessException("专业不能为空");
+            }
+            if (studentApplyDTO.getQq() == null) {
+                throw new BusinessException("QQ号不能为空");
+            }
+            if (studentApplyDTO.getPhone() == null) {
+                throw new BusinessException("联系电话不能为空");
+            }
             //检查学号是否存在
             QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("student_num",studentApplyDTO.getStudentNum());
@@ -53,7 +68,9 @@ public class StudentServiceImpl implements StudentService {
             BeanUtils.copyProperties(studentApplyDTO,student);
 
             //插入
-            studentMapper.insert(student);
+            if (studentMapper.insert(student) != 1) {
+                throw new BusinessException("报名信息保存失败");
+            }
 
 
     }
@@ -81,6 +98,7 @@ public class StudentServiceImpl implements StudentService {
     }
     @Override
     public Map<String, Object> getStudentPage(int pageNum, int pageSize) {
+        validatePageRequest(pageNum, pageSize);
         log.info("[StudentServiceImpl] 分页查询学生信息（包含专业名称），页码：{}，每页大小：{}", pageNum, pageSize);
         
         // 先查询总记录数
@@ -107,6 +125,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Map<String, Object> getStudentPageWithDetails(int pageNum, int pageSize) {
+        validatePageRequest(pageNum, pageSize);
         log.info("[StudentServiceImpl] 分页查询学生信息（包含专业名称），页码：{}，每页大小：{}", pageNum, pageSize);
         
         // 先查询总记录数
@@ -244,6 +263,15 @@ public class StudentServiceImpl implements StudentService {
         } catch (Exception e) {
             log.error("导出 Excel 失败", e);
             throw new BusinessException(500, "导出失败：" + e.getMessage());
+        }
+    }
+
+    private void validatePageRequest(int pageNum, int pageSize) {
+        if (pageNum < 1) {
+            throw new BusinessException("页码必须大于0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new BusinessException("每页数量必须在1到100之间");
         }
     }
 }

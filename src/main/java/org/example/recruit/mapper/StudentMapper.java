@@ -16,7 +16,8 @@ public interface StudentMapper extends BaseMapper<Student> {
     /**
      * 查询所有学生信息（包含专业名称）
      */
-    @Select("SELECT s.*, sp.specialty_name FROM student s " +
+    @Select("SELECT s.id, s.name, s.student_num, s.grade, s.specialty_id, s.qq, s.phone, " +
+            "s.submission_time, sp.specialty_name FROM student s " +
             "LEFT JOIN specialty sp ON s.specialty_id = sp.id " +
             "ORDER BY s.submission_time DESC")
     List<StudentWithDetailsDTO> selectStudentsWithDetails();
@@ -24,7 +25,8 @@ public interface StudentMapper extends BaseMapper<Student> {
     /**
      * 分页查询学生信息（包含专业名称）
      */
-    @Select("SELECT s.*, sp.specialty_name FROM student s " +
+    @Select("SELECT s.id, s.name, s.student_num, s.grade, s.specialty_id, s.qq, s.phone, " +
+            "s.submission_time, sp.specialty_name FROM student s " +
             "LEFT JOIN specialty sp ON s.specialty_id = sp.id " +
             "ORDER BY s.submission_time DESC " +
             "LIMIT #{offset}, #{pageSize}")
@@ -34,7 +36,8 @@ public interface StudentMapper extends BaseMapper<Student> {
      * 根据学号列表查询学生信息（包含专业名称）
      */
     @Select("<script>" +
-            "SELECT s.*, sp.specialty_name FROM student s " +
+            "SELECT s.id, s.name, s.student_num, s.grade, s.specialty_id, s.qq, s.phone, " +
+            "s.submission_time, sp.specialty_name FROM student s " +
             "LEFT JOIN specialty sp ON s.specialty_id = sp.id " +
             "WHERE s.student_num IN " +
             "<foreach collection='studentNums' item='studentNum' open='(' separator=',' close=')'>" +
@@ -44,4 +47,3 @@ public interface StudentMapper extends BaseMapper<Student> {
             "</script>")
     List<StudentWithDetailsDTO> selectStudentsWithDetailsByStudentNums(List<Long> studentNums);
 }
-

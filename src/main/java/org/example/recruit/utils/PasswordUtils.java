@@ -28,7 +28,17 @@ public class PasswordUtils {
      * @return 是否匹配
      */
     public static boolean matches(String rawPassword, String encodedPassword) {
-        // 首先尝试明文验证
+        if (rawPassword == null || encodedPassword == null) {
+            return false;
+        }
+
+        if (encodedPassword.startsWith("$2a$")
+                || encodedPassword.startsWith("$2b$")
+                || encodedPassword.startsWith("$2y$")) {
+            return encoder.matches(rawPassword, encodedPassword);
+        }
+
+        // Compatibility for existing accounts. New passwords must use BCrypt.
         if (rawPassword.equals(encodedPassword)) {
             return true;
         }

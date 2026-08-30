@@ -3,13 +3,17 @@ spring:
     name: recruit
 
   datasource:
-    url: jdbc:mysql://localhost:3306/recruit?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
-    username: NAME
-    password: PSW
+    url: ${DB_URL:jdbc:mysql://localhost:3306/recruit?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8}
+    username: ${DB_USERNAME:recruit}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
   port: 8081
+
+jwt:
+  # Must be set in every environment; never use a shared default signing key.
+  secret: ${JWT_SECRET}
 
 mybatis-plus:
 

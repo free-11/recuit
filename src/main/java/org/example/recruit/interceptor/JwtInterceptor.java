@@ -5,11 +5,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.recruit.utils.JwtUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @Slf4j
 public class JwtInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,7 +37,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         // 验证token
         try {
-            if (!JwtUtils.validateToken(token)) {
+            if (!jwtUtils.validateToken(token)) {
                 log.warn("[JwtInterceptor] token验证失败");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json;charset=UTF-8");
@@ -42,7 +46,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             }
 
             // 获取用户名并设置到request中，方便后续使用
-            String username = JwtUtils.getUsernameFromToken(token);
+            String username = jwtUtils.getUsernameFromToken(token);
             request.setAttribute("username", username);
             log.info("[JwtInterceptor] token验证成功，用户名：{}", username);
             return true;

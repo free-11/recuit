@@ -22,23 +22,23 @@ public class TechDirection {
     @TableField(exist = false)
     private List<String> tagsList;
     
-    // 数据库中的 tags 字段，存储为逗号分隔的字符串
+    // 数据库存储逗号分隔的字符串，内部字段名避免生成保留字别名。
     @JsonIgnore
-    private String tags;
+    @TableField("tags")
+    private String tagsCsv;
     
     @TableField(exist = false)
     private List<String> descList;
     
-    // 数据库中的 desc 字段，存储为逗号分隔的字符串
     @JsonIgnore
-    @TableField(value = "`desc`")
-    private String desc;
+    @TableField("`desc`")
+    private String descriptionCsv;
     
     // 从数据库读取时，将字符串转换为列表
     public List<String> getTagsList() {
-        if (StringUtils.isNotBlank(tags)) {
+        if (StringUtils.isNotBlank(tagsCsv)) {
             // 使用正则表达式分割，支持英文逗号、中文逗号、分号和空格作为分隔符
-            String[] tagArray = tags.split("[,，;\\s]+");
+            String[] tagArray = tagsCsv.split("[,，;\\s]+");
             // 过滤空字符串
             return Arrays.stream(tagArray)
                     .filter(StringUtils::isNotBlank)
@@ -52,17 +52,17 @@ public class TechDirection {
         this.tagsList = tagsList;
         if (tagsList != null && !tagsList.isEmpty()) {
             // 保存时使用逗号作为分隔符，保持数据库存储格式一致
-            this.tags = String.join(",", tagsList);
+            this.tagsCsv = String.join(",", tagsList);
         } else {
-            this.tags = null;
+            this.tagsCsv = null;
         }
     }
     
     // 从数据库读取时，将字符串转换为列表
     public List<String> getDescList() {
-        if (StringUtils.isNotBlank(desc)) {
+        if (StringUtils.isNotBlank(descriptionCsv)) {
             // 使用正则表达式分割，支持英文逗号、中文逗号、分号和空格作为分隔符
-            String[] descArray = desc.split("[,，;\\s]+");
+            String[] descArray = descriptionCsv.split("[,，;\\s]+");
             // 过滤空字符串
             return Arrays.stream(descArray)
                     .filter(StringUtils::isNotBlank)
@@ -76,9 +76,9 @@ public class TechDirection {
         this.descList = descList;
         if (descList != null && !descList.isEmpty()) {
             // 保存时使用逗号作为分隔符，保持数据库存储格式一致
-            this.desc = String.join(",", descList);
+            this.descriptionCsv = String.join(",", descList);
         } else {
-            this.desc = null;
+            this.descriptionCsv = null;
         }
     }
 }

@@ -7,6 +7,7 @@ import org.example.recruit.mapper.HonorMapper;
 import org.example.recruit.service.HonorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,22 +67,19 @@ public class HonorServiceImpl implements HonorService {
     }
 
     @Override
+    @Transactional
     public boolean updateSort(List<HonorSortDTO> sortList) {
         log.info("[HonorServiceImpl] 更新荣誉排序，数量：{}", sortList.size());
-        try {
-            // 批量更新排序
-            for (HonorSortDTO sortDTO : sortList) {
-                Honor honor = new Honor();
-                honor.setId(sortDTO.getId());
-                honor.setSort(sortDTO.getSort());
-                honorMapper.updateById(honor);
+        for (HonorSortDTO sortDTO : sortList) {
+            Honor honor = new Honor();
+            honor.setId(sortDTO.getId());
+            honor.setSort(sortDTO.getSort());
+            if (honorMapper.updateById(honor) != 1) {
+                throw new IllegalArgumentException("荣誉不存在，ID：" + sortDTO.getId());
             }
-            log.info("[HonorServiceImpl] 更新荣誉排序成功");
-            return true;
-        } catch (Exception e) {
-            log.error("[HonorServiceImpl] 更新荣誉排序异常：{}", e.getMessage(), e);
-            return false;
         }
+        log.info("[HonorServiceImpl] 更新荣誉排序成功");
+        return true;
     }
 
     @Override
