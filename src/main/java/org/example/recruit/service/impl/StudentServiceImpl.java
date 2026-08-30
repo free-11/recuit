@@ -12,9 +12,11 @@ import org.example.recruit.exception.BusinessException;
 import org.example.recruit.exception.DeleteFailedException;
 import org.example.recruit.mapper.StudentMapper;
 import org.example.recruit.service.StudentService;
+import org.example.recruit.service.StudentApplyRateLimiter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -28,6 +30,9 @@ import java.util.Map;
 public class StudentServiceImpl implements StudentService {
     @Autowired
     StudentMapper studentMapper;
+
+    @Autowired
+    StudentApplyRateLimiter applyRateLimiter;
 
     @Override
     public void apply(StudentApplyDTO studentApplyDTO) {
@@ -52,12 +57,17 @@ public class StudentServiceImpl implements StudentService {
             if (studentApplyDTO.getPhone() == null) {
                 throw new BusinessException("联系电话不能为空");
             }
-            //检查学号是否存在
+            // 已提交过的学号不允许再次报名
             QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("student_num",studentApplyDTO.getStudentNum());
             if(studentMapper.selectOne(queryWrapper)!=null){
                 throw new BusinessException("该学号已经存在，请勿重复报名！");
             }
+
+            if (!applyRateLimiter.tryAcquire(studentApplyDTO.getStudentNum())) {
+                throw new BusinessException("提交过于频繁，请" + applyRateLimiter.getCooldownSeconds() + "秒后再试！");
+            }
+
             //创建实体对象
             Student student = new Student();
             //设置提交时间
@@ -68,8 +78,13 @@ public class StudentServiceImpl implements StudentService {
             BeanUtils.copyProperties(studentApplyDTO,student);
 
             //插入
-            if (studentMapper.insert(student) != 1) {
-                throw new BusinessException("报名信息保存失败");
+            try {
+                if (studentMapper.insert(student) != 1) {
+                    throw new BusinessException("报名信息保存失败");
+                }
+            } catch (DuplicateKeyException e) {
+                // The unique database key closes the check-then-insert race.
+                throw new BusinessException("该学号已经存在，请勿重复报名！");
             }
 
 

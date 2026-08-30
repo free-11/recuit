@@ -11,6 +11,10 @@ spring:
 server:
   port: 8081
 
+recruit:
+  apply:
+    cooldown-seconds: ${APPLY_COOLDOWN_SECONDS:60}
+
 jwt:
   # Must be set in every environment; never use a shared default signing key.
   secret: ${JWT_SECRET}

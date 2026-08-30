@@ -942,11 +942,41 @@ const scrollDepts = (direction) => {
   })
 }
 
-// 复制群号
-const copyGroupNumber = () => {
-  navigator.clipboard.writeText(qqCode.value).then(() => {
-    alert('群号已复制到剪贴板！')
-  })
+// 复制群号。HTTP IP 地址不是安全上下文时，Clipboard API 可能不可用，
+// 因此保留 textarea 降级方案，兼容移动端和普通浏览器。
+const copyGroupNumber = async () => {
+  const groupNumber = String(qqCode.value || '').trim()
+  if (!groupNumber || groupNumber === 'xxxxxxxx') {
+    ElMessage.warning('群号暂未配置')
+    return
+  }
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(groupNumber)
+        ElMessage.success('群号已复制')
+        return
+      } catch {
+        // Continue with the legacy fallback below.
+      }
+    }
+
+    const textarea = document.createElement('textarea')
+    textarea.value = groupNumber
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    const copied = document.execCommand('copy')
+    document.body.removeChild(textarea)
+
+    if (!copied) throw new Error('copy command failed')
+    ElMessage.success('群号已复制')
+  } catch (error) {
+    ElMessage.error('复制失败，请长按群号手动复制')
+  }
 }
 
 // 显示更多历史
